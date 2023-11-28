@@ -20,4 +20,4 @@ to see application running
 
 ## Calculator
 
-[Calculator](/assets/calculator.png "Calculator")
+![Calculator](/assets/calculator.png "Calculator")
