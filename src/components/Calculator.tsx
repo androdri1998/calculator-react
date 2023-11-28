@@ -4,17 +4,40 @@ import Button from "./Button";
 
 import "./calculator.css";
 
+interface KeyPad {
+  type: string;
+  value: string;
+}
+
 const Calculator = () => {
   const [currentValue, setCurrentValue] = useState<string>("0");
   const [pendingOperation, setPendingOperation] = useState<string | null>(null);
   const [pendingValue, setPendingValue] = useState<string | null>(null);
   const [completeOperation, setCompleteOperation] = useState<string>("");
 
-  const keypadNumbers = useMemo<number[]>(
-    () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+  const keypad = useMemo<KeyPad[]>(
+    () => [
+      { value: "1", type: "button" },
+      { value: "2", type: "button" },
+      { value: "+", type: "operation" },
+      { value: "3", type: "button" },
+
+      { value: "4", type: "button" },
+      { value: "5", type: "button" },
+      { value: "-", type: "operation" },
+      { value: "6", type: "button" },
+
+      { value: "7", type: "button" },
+      { value: "8", type: "button" },
+      { value: "/", type: "operation" },
+      { value: "9", type: "button" },
+
+      { value: "0", type: "button" },
+      { value: "=", type: "equal" },
+      { value: "*", type: "operation" },
+    ],
     []
   );
-  const operationals = useMemo<string[]>(() => ["+", "-", "*", "/"], []);
 
   const handleClick = useCallback((number: number) => {
     setCurrentValue((prevValue: string) => {
@@ -45,12 +68,15 @@ const Calculator = () => {
     setCompleteOperation("");
   }, []);
 
-  const handleOperation = (operation: string) => {
-    setCompleteOperation(`${currentValue} ${operation}`);
-    setPendingOperation(operation);
-    setPendingValue(currentValue);
-    setCurrentValue("0");
-  };
+  const handleOperation = useCallback(
+    (operation: string) => {
+      setCompleteOperation(`${currentValue} ${operation}`);
+      setPendingOperation(operation);
+      setPendingValue(currentValue);
+      setCurrentValue("0");
+    },
+    [currentValue]
+  );
 
   const handleCalculate = useCallback(() => {
     if (!pendingValue || !pendingOperation) {
@@ -92,6 +118,19 @@ const Calculator = () => {
     setPendingValue(null);
   }, [currentValue, pendingOperation, pendingValue]);
 
+  const strategyActions = useCallback(
+    (type: string, value: string) => {
+      const actions: { [key: string]: () => void } = {
+        operation: () => handleOperation(value),
+        button: () => handleClick(parseFloat(value)),
+        equal: () => handleCalculate(),
+      };
+
+      return actions[type];
+    },
+    [handleCalculate, handleClick, handleOperation]
+  );
+
   return (
     <main className="calculator">
       <section className="complete-operation">{completeOperation}</section>
@@ -99,22 +138,13 @@ const Calculator = () => {
       <section className="buttons">
         <Button onClick={handleClearCalculator} value={"AC"} />
 
-        {keypadNumbers.map((number: number) => (
+        {keypad.map((item: KeyPad) => (
           <Button
-            key={number}
-            onClick={() => handleClick(number)}
-            value={number}
+            key={item.value}
+            onClick={strategyActions(item.type, item.value)}
+            value={item.value}
           />
         ))}
-
-        {operationals.map((operation: string) => (
-          <Button
-            onClick={() => handleOperation(operation)}
-            key={operation}
-            value={operation}
-          />
-        ))}
-        <Button onClick={handleCalculate} value={"="} />
       </section>
     </main>
   );
