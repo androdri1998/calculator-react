@@ -1,6 +1,6 @@
 # calculator-react
 
-This is a react project that builds a calculator
+This is a calculator project build with react.js
 
 # Setup
 
