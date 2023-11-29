@@ -4,17 +4,17 @@ This is a react project that builds a calculator
 
 # Setup
 
-## $ npm install
+## Intall dependencies
 
-Intall dependencies
+`$ npm install`
 
-## $ npm run dev
+## run locally
 
-run locally
+`$ npm run dev`
 
-## Access url printed at terminal
+## Check link
 
-to see application running
+Access url printed at terminal to see application running
 
 # Designs
 
